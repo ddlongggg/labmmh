@@ -1,0 +1,4 @@
+D:/LABS_MatMaHoc/Lab5/build/CMakeFiles/sigtool.dir
+D:/LABS_MatMaHoc/Lab5/build/CMakeFiles/benchmark.dir
+D:/LABS_MatMaHoc/Lab5/build/CMakeFiles/edit_cache.dir
+D:/LABS_MatMaHoc/Lab5/build/CMakeFiles/rebuild_cache.dir

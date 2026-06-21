@@ -1,0 +1,7 @@
+{
+  "alg": "AES",
+  "mode": "gcm",
+  "iv": "63ccc8e8449f4342a2bc6b9134ff6314",
+  "aad": "ABCXYZ",
+  "tag": "b2ca0105768820e99232f69338fc042a"
+}

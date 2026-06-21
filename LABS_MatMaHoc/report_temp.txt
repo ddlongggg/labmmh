@@ -1,0 +1,92 @@
+FINAL REPORT 
+Lớp: NT219.Q12.ANTT
+Họ và tên: Tạ Đức Long
+MSSV: 24521013
+WINDOWS:
+Performance Protocol:
+1.1. Hardware/OS table:
+CPU:
+Name: 12th Gen Intel(R) Core(TM) i5-12500H
+NumberOfCores: 12  
+NumberOfLogicalProcessors: 16
+RAM: 16GB
+STORAGE TYPE: SSD
+OS VERSION: Microsoft Windows 11 Home Single Language
+COMPILER: MinGW g++
+FLAG: -O3 & -G2
+Submission Checklist:
+README.md //
+Task.json x
+File binaries x
+Source code, headers, tests, KAT files x
+Report (.pdf/.docx) with tables/plots and analysis x
+Self-grade rubric x
+Appendix A — Academic Integrity & Ethics 
+Work is your own; cite libraries, KAT sources, and references.
+Attack demonstrations are limited to your own test artifacts in an offline sandbox.
+No testing against third-party data, networks, or services.
+Keys and secrets included in the repo are test keys only.
+You understand the difference between vulnerability demonstration and malicious exploitation and commit to the former strictly for learning.
+LAB1: Symmetric Encryption with Crypto++
+Design
+- src/main.cpp: Điểm truy cập của chương trình (Entry point), chịu trách nhiệm phân tích tham số dòng lệnh (CLI parsing).
+- src/CipherCore.cpp: Chứa logic lõi gọi tới các API của Crypto++ để mã hóa/giải mã cho từng mode và xử lý AEAD.
+- src/AESUtils.cpp: Xử lý các tác vụ tiện ích như File I/O, tạo IV/Nonce an toàn (sử dụng RNG của Crypto++).
+- src/KATRunner.cpp: Module đọc file vectors.json và chạy các Known Answer Tests theo chuẩn NIST.
+- src/Benchmarker.cpp: Module thực hiện đo đạc hiệu năng (Throughput, Latency).
+a. CMakeLists.txt
+CMakeLists.txt
+- Dòng 7-10 (CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded..."): Trên Windows sử dụng trình biên dịch MSVC, dòng này ép chương trình sử dụng thư viện C++ Runtime tĩnh (thay vì DLL). Việc này giúp file thực thi .exe có thể chạy trên máy Windows khác mà không bị lỗi thiếu file .dll hệ thống 
+- Dòng 13 & 15 (include_directories): Khai báo cho trình biên dịch biết thư mục chứa các file .h của thư viện Crypto++
+- Dòng 28-34 (target_link_libraries theo OS/Compiler): tùy thuộc vào việc đang build mã nguồn bằng MSVC (Windows Visual Studio), Clang hay GCC/MinGW (thường thấy trên Linux hoặc môi trường MSYS2), CMake sẽ tự động trỏ tới đúng file thư viện được biên dịch sẵn (.lib cho MSVC hoặc .a cho GCC/Clang)
+Dùng CMake biên dịch chương trình
+b. Giao diện dòng lệnh (CLI): 
+- Thay vì bắt buộc người dùng truyền tham số theo đúng thứ tự (rất dễ nhầm lẫn), vòng lặp này bắt các cờ (flags) định danh (như --mode, --in,….). Ngoài ra, công cụ hỗ trợ truyền trực tiếp chuỗi vào để mã hóa thông qua cờ --text 
+- Algorithm & Implementation: Hỗ trợ chạy được nhiều chế độ (ECB, CBC, CFB, OFB, CTR, XTS, CCM, GCM), xử lí các thẻ xác thực (tag) cho AEAD
+c. Xử lí lưu trữ Key và IV an toàn
+- Dùng Filter (Bộ lọc) Pineline từ StringSource -> HexEncoder -> StringSink của Crypto++ để mã hóa các byte đó sang dạng Hex có thể đọc được (Readable Text) và ghi file kèm tiền tố KEY= và IV=. Tương ứng, lúc đọc (LoadHex) sẽ dùng HexDecoder
+d. Tự động sinh IV và quản lí qua Sidecar JSON Header: 
+- Nếu người dùng chỉ truyền --mode và --key mà không truyền --iv, chương trình sẽ tự động gọi trình tạo số ngẫu nhiên an toàn để sinh IV mới. Sau khi mã hóa xong, toàn bộ thông số ngữ cảnh sẽ được lưu vào một file "Sidecar JSON"
+Main.cpp
+AESUtils.cpp
+- AutoSeededRandomPool là hàm RNG sử dụng entropy (nhiễu) từ hệ điều hành (như /dev/urandom trên Linux hoặc CryptGenRandom API trên Windows). Việc dùng RNG chuẩn mật mã đảm bảo IV sinh ra không thể đoán trước, khắc phục triệt để lỗ hổng nếu xài hàm rand() cơ bản trong C/C++.
+-  Khi bạn gửi Ciphertext cho người nhận, họ sẽ không biết IV là gì hoặc mã hóa bằng Mode nào để giải mã. File JSON sinh kèm sẽ bao bọc (wrap) tất cả metadata này (bao gồm cả Tag xác thực cho GCM/CCM) giúp người nhận chỉ cần nạp vào và giải mã cực kỳ bảo mật và tiện lợi
+e. Cấu trúc Pipeline 
+- Thay vì viết lặp đi lặp lại các đoạn code mã hóa cho từng chế độ riêng lẻ (ECB, CBC, OFB, CTR...), chương trình áp dụng tính năng C++ Templates kết hợp với Pipeline Filter của Crypto++. Điều này giúp mã nguồn cực kỳ gọn gàng và dễ mở rộng
+- ECB không dùng IV, các mode khác dùng IV
+- StreamTransformationFilter đóng vai trò là lõi mã hóa. Nó sẽ nhận dữ liệu từ FileSource, tự động đệm (Padding - theo chuẩn PKCS#7) nếu cần, mã hóa từng block và đẩy thẳng xuống FileSink để ghi ra đĩa. Pipeline này tối ưu bộ nhớ vì dữ liệu được stream (chảy) trực tiếp mà không cần load toàn bộ file vào RAM
+f. Xác thực (AEAD - GCM & CCM)
+- Đối với GCM và CCM, chương trình sử dụng các lớp AuthenticatedEncryptionFilter chuyên biệt để vừa mã hóa vừa tính toán mã xác thực (Authentication Tag)
+- Mode CCM yêu cầu phải biết trước kích thước file (dòng code SpecifyDataLengths) khác với GCM có thể mã hóa dạng stream liên tục. Tag 16 byte được tự động chèn vào cuối file sau quá trình mã hóa
+g. Hạn chế chế độ mã hóa ECB
+- Khi người dùng chọn --mode ecb, hệ thống lập tức in ra dòng WARNING. Tiếp theo, nó gọi hàm kiểm tra dung lượng file đầu vào, nếu file lớn hơn 16 KiB ~ 16384 bytes và không có cờ --allow-ecb, chương trình ném ra ngoại lệ từ chối mã hóa
+j. Không cho phép dùng lại Nonce (Nonce Reuse Protection)
+- Sử dụng lại cặp (Key, Nonce) trong các mode stream như CTR hay GCM sẽ làm phá vỡ toàn bộ hệ thống mật mã
+- Trước khi mã hóa, chương trình băm (hash) mã định danh gồm Mode + Key + IV. Nếu mã này đã tồn tại trong database nonce_db.json, chương trình từ chối hoạt động (ném ra lỗi CATASTROPHIC: Nonce reuse detected)
+k. Fail Closed & Verification
+- Cơ chế kiểm tra tính toàn vẹn trong giải mã AEAD: Ở hàm DecryptAEAD AuthenticatedDecryptionFilter được khởi tạo kèm cờ THROW_EXCEPTION
+- Trong các chế độ AEAD như GCM và CCM, tính toàn vẹn và xác thực của dữ liệu là bắt buộc. Ta sử dụng AuthenticatedDecryptionFilter của thư viện Crypto++ với các cờ MAC_AT_BEGIN và THROW_EXCEPTION. Thiết kế này đảm bảo rằng thẻ xác thực (Authentication Tag) sẽ được kiểm tra ngay lập tức. Nếu Ciphertext hoặc Tag bị thay đổi dù chỉ một bit (bị tấn công giả mạo), bộ lọc sẽ ném ra ngoại lệ (exception) HashVerificationFailed và lập tức hủy bỏ quá trình giải mã. Cơ chế này đảm bảo nguyên tắc Fail-Closed, tuyệt đối không trả về các dữ liệu bản rõ (plaintext) đã bị thay đổi, giúp ngăn chặn triệt để các cuộc tấn công thay đổi nội dung
+Kiểm thử
+KAT
+- Để chứng minh các thuật toán triển khai đúng chuẩn của NIST (Viện Tiêu chuẩn và Công nghệ Quốc gia Hoa Kỳ), chương trình được tích hợp KATRunner.cpp. Module này tự động đọc các vector thử nghiệm (Key, IV, Plaintext, Ciphertext, Tag) từ file vectors.json
+- So sánh Ciphertext sinh ra với Ciphertext chuẩn NIST và kiểm tra mã xác thực (Authentication Tag) cho chế độ AEAD
+- Các hệ thống mật mã yêu cầu độ chính xác tuyệt đối và  việc sai lệch dù chỉ 1 bit cũng sẽ khiến kết quả giải mã trở thành rác. Logic kiểm tra của KATRunner so sánh chính xác từng mảng byte (SecByteBlock)
+Các testcase chuẩn NIST để kiểm thử
+Kết quả chạy kiểm thử KAT
+Các chức năng
+Generate key
+Encrypt với Mode GCM với aead và aad
+- Không cần phải thêm --iv thì hệ thống cũng sẽ tự động thêm, sau đó hệ thống tự động tạo ra file cipher.bin.json chứa thuật toán, IV và thẻ TAG
+- Sau khi đã encrypt bằng file khóa key.bin thì ta thử thêm --iv key.bin vào và encrypt lại => Kết quả thu được sẽ không cho phép encrypt lại lần nữa với khóa key.bin
+- Khi decrypt nếu không đúng -aad thì sẽ thông báo lỗi HashVerificationFilter: message hash or MAC not valid
+- Nếu đúng aad thì decrypt thành công, hoặc nếu không cần aad thì hệ thống sẽ tự đọc file cipher.bin.json để lấy các thông tin nên vẫn decrypt thành công
+Kết quả 2 file sau khi đã Decrypt
+Negative Test
+- Tạo key giả mạo và thử decrypt bằng key giả mạo => không thể decrypt
+- Thay đổi dữ liệu của file khóa key.bin, chèn thêm kí tự X vào cuối
+- Sau khi sửa ta thực hiện decrypt lại, kết quả vẫn không thể decrypt được vì dữ liệu của key đã bị sửa đổi
+- Tiếp theo thử sửa 1 kí tự bất kì trong 1 trường bất kì trong file cipher.bin.json và sau đó thực hiện decrypt lại
+- Sau khi sửa xong thực hiện thay đổi kí tự 3 thành kí tự a thì ta decrypt lại thì ta sẽ thấy nó không thể decrypt được thành công
+- Thử tạo 1 key sai kích thước, bị ngắn hơn so với quy định của AES-256 là 32 bytes, kết quả sẽ bắn ra thông báo lỗi do chính chúng ta cài cắm: Error: Invalid key length. Chặn đứng ngay từ cửa chứ không để chương trình chạy tiếp rồi bị sập
+- Thực hiện encrypt file hình contho.jpg có kích thước lớn hơn 16KiB, chế độ ECB (Electronic Codebook) là chế độ kém bảo mật nhất. Nếu ta mã hoá một file ảnh chứa logo hình con chim cánh cụt bằng ECB, thì sau khi mã hoá xong, người ta nhìn vào file mã hoá... vẫn lờ mờ thấy được hình con chim cánh cụt! (Hiện tượng rò rỉ cấu trúc dữ liệu - Data Pattern Leakage). Vì vậy, giới bảo mật khuyến cáo: Tuyệt đối không dùng ECB để mã hoá dữ liệu lớn hơn 16 KiB (16 kilobytes)
+Benchmarks

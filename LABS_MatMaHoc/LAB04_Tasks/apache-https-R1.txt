@@ -1,0 +1,104 @@
+1. Creat digital certificate and setting https
+- Register an acount and a domain at: https://dash.infinityfree.com/accounts
+- Check domain and edit DSN CNAME at: https://dash.infinityfree.com/accounts -> DNS records -> Manager -> Add recored -> CNAME
+- Creat an acount at: https://zerossl.com/
+- Register a diigital certificate
+  + See x509-openssl.txt to crete key and request certificate (.csr)
+  + Request a digital certificate at zerossl.com
+
+2. Setup apache window
+- Download Apache 2.4.x OpenSSL 3.0.x VS17 (httpd-2.4.59-240404-win64-VS17.zip   )
+https://www.apachelounge.com/download/
++ Extract en copy to c:\Apache24
++ create a folder C:\Apache24\conf\ssl
++ Copy certificate and private key to C:\Apache24\conf\ssl
+ 
+
+3. Setting httpd.conf
+ServerName 127.0.0.1
+LoadModule ssl_module modules/mod_ssl.so
+LoadModule socache_shmcb_module modules/mod_socache_shmcb.so
+Include conf/extra/httpd-ssl.conf
+# Add more line after ServerRoot
+Define ENABLE_TLS13 "Yes"
+
+
+4. Setting https (using httpd-ssl)
+  + Edit file "C:\Apache24\conf\extra\httpd-ssl"
+	(using your domain, certificate and key in Step 1. The folloing are example for my certificate)
+4.1 Setting cipher and other cryptographic functions
+<IfDefine ENABLE_TLS13>
+  SSLProtocol -all +TLSv1.3 +TLSv1.2 
+  SSLCipherSuite TLSv1.3 TLS_AES_256_GCM_SHA512:TLS_AES_256_GCM_SHA384:TLS_AES_256_GCM_SHA256:TLS_AES_128_GCM_SHA256 
+</IfDefine>
+
+NO!
+<IfDefine !ENABLE_TLS13>
+SSLProtocol -all +TLSv1.2
+SSLCipherSuite ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-CHACHA20-POLY1305:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:!RC4:!LOW:!MD5:!aNULL:!eNULL:!3DES:!EXP:!PSK:!SRP:!DSS
+SSLProxyCipherSuite ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-CHACHA20-POLY1305:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:!RC4:!LOW:!MD5:!aNULL:!eNULL:!3DES:!EXP:!PSK:!SRP:!DSS
+</IfDefine>
+
+4.2 Seting virtual host
+	   <VirtualHost _default_:443>
+	  DocumentRoot "${SRVROOT}/htdocs"
+	  SSLEngine on
+	  ServerName caohoctravinh.wuaze.com:443
+	  SSLCertificateFile "${SRVROOT}/conf/ssl/certificate.crt"
+	  SSLCertificateKeyFile "${SRVROOT}/conf/ssl/ec-private-key.pem"
+	  SSLCACertificatePath "${SRVROOT}/conf/ssl"
+	  SSLCACertificateFile "${SRVROOT}/conf/ssl/ca_bundle.crt"
+
+	# DocumentRoot access handled globally in httpd.conf
+		CustomLog "${SRVROOT}/logs/ssl_request.log" \
+	          "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
+		<Directory "${SRVROOT}/htdocs">
+			Options Indexes Includes FollowSymLinks
+			AllowOverride AuthConfig Limit FileInfo
+	    		Require all granted
+		</Directory>
+	</virtualhost>
+
+
+5. Test apache and setup
+- Test
+	run (cmd admin): C:\Apache24\bin\httpd.exe (silent running)
+	run (browser) for test Apache24: http://localhost/
+- Install
+	httpd -k install
+	httpd -k start
+- Other Command line option
+	Stop Apache: httpd -k stop
+	Restart Apache: C:\Apache24\bin\httpd -k restart
+	Uninstall Apache Service: C:\Apache24\bin\httpd -k uninstall
+	Test Config Syntax: C:\Apache24\bin\httpd -t
+	Version Details: C:\Apache24\bin\httpd -V
+	Command Line Options List: C:\Apache24\bin\httpd -h
+5. Check Openssl for cryptographic layer
+C:\Apache24\bin\openssl.exe help
+C:\Apache24\bin\openssl.exe enc -help
+C:\Apache24\bin\openssl.exe enc -list
+
+
+7. Check the setting
++ Check setting: C:\Apache24\bin\httpd.exe -t
+The result should be: Syntax OK
+
++ Edit the host file: "C:\Windows\System32\drivers\etc\hosts"
+  127.0.0.1	[your domain name]
+
+
++ Eestart Apache server
+C:\Apache24\bin\httpd.exe -k restart -f C:\Apache24\conf\httpd.conf
+
+8. Check https (and capture your results and submit)
+my case:
+https://attt2024.wuaze.com/
+the return must be secure
+
+1. Turn off ISS
+iisreset /stop
+2. or Disable IIS Permanently
+
+Windows + R --> Windows Featuresr
+turn of Internet Information Services

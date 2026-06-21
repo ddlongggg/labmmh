@@ -1,0 +1,9 @@
+Crypto++ lib
+D:\\Labs_Crypto\\cryptolibrary\\libs\\cryptopp\\gcc
+D:\\Labs_Crypto\\cryptolibrary\\libs\\cryptopp\\clang
+D:\\Labs_Crypto\\cryptolibrary\\libs\\cryptopp\\msvc
+D:\\Labs_Crypto\\cryptolibrary\\include
+
+OpenSSL
+D:\\Labs_Crypto\\openssl362\\include
+D:\\Labs_Crypto\\openssl362\\lib64

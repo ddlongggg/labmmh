@@ -1,0 +1,6 @@
+D:/LABS_MatMaHoc/Lab4/build/CMakeFiles/Lab4_Task1_HashSuite.dir
+D:/LABS_MatMaHoc/Lab4/build/CMakeFiles/Lab4_Task2_X509.dir
+D:/LABS_MatMaHoc/Lab4/build/CMakeFiles/Lab4_Task5_Benchmark.dir
+D:/LABS_MatMaHoc/Lab4/build/CMakeFiles/Lab4_Task6A_LenExt.dir
+D:/LABS_MatMaHoc/Lab4/build/CMakeFiles/edit_cache.dir
+D:/LABS_MatMaHoc/Lab4/build/CMakeFiles/rebuild_cache.dir

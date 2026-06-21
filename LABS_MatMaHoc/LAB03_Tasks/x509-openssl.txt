@@ -1,0 +1,50 @@
+
+CLrkaGkfX5zN
+Domain name:
+uit2025antn.wuaze.com
+
+https://wiki.openssl.org/index.php/Command_Line_Elliptic_Curve_Operations
+1. RSA
+// Base64 form
+openssl genrsa -out rsaprivate.pem 3072
+openssl rsa -in rsaprivate.pem -pubout -out rsapubkey.pem
+
+// Binary form
+openssl rsa -in rsaprivate.pem -outform DER -out rsa-private.der
+openssl rsa -in rsaprivate.pem -outform DER -pubout -out rsa-pubkey.der
+
+Read:
+D:\msys64\mingw64\bin\openssl.exe rsa -inform pem -in rsaprivate.pem -text -noout
+D:\msys64\mingw64\bin\openssl.exe rsa -inform pem -pubin -in rsapubkey.pem -text -noout
+
+
+// Cerificate
+openssl req -key rsa-private.key -new -out temp.csr
+openssl req -text -noout -verify -in temp.csr
+(may selft-sign the cert in case yous are the trusted rootca)
+openssl x509 -signkey rsa-private.key -in temp.csr -req -days 365 -out uit.crt
+openssl x509 -in uit.crt -inform pem -text -noout
+may use: certutil.exe
+
+2. ECC
+openssl ecparam -list_curves
+
+openssl ecparam -name prime256v1 -genkey -noout -out ec-private-key.pem
+
+openssl ec -in ec-private-key.pem -pubout -out ec-public-key.pem
+
+Create
+openssl req -key ec-private-key.pem -new -out ec-temp.csr
+Check
+openssl req -text -noout -verify -in ec-temp.csr
+
+3. Checking Server certificate
+
+echo | openssl s_client -servername www.vietcombank.com.vn -connect www.vietcombank.com.vn:443 2>resul.txt | openssl x509 -text
+
+echo | openssl s_client -servername www.facebook.com -connect www.facebook.com:443 2> cert | openssl x509 -out facebook.cer -text
+
+openssl x509 -in certificate.crt -inform pem -text -noout
+
+openssl crl -in g6.crl -text -noout
+https://rootca.gov.vn/
