@@ -37,7 +37,9 @@ for name in "${!sizes1[@]}"; do
     fi
     echo "    Benchmarking $name..."
     ./build_linux/aestool bench --in "$payload" --out "$csvout" --runs 30
-    cp "$csvout" "$ROOT_DIR/global_benchmark_results/Lab1_benchmark_${name}_linux.csv"
+    base="${csvout%.csv}"
+    cp "${base}_enc.csv" "$ROOT_DIR/global_benchmark_results/Lab1_benchmark_${name}_linux_enc.csv" 2>/dev/null || true
+    cp "${base}_dec.csv" "$ROOT_DIR/global_benchmark_results/Lab1_benchmark_${name}_linux_dec.csv" 2>/dev/null || true
 done
 
 # ---------------------------------------------------------
@@ -66,7 +68,7 @@ for name in "${!sizes2[@]}"; do
     fi
     echo "    Benchmarking $name..."
     ./build_linux/aestool2 bench --in "$payload" --out "$csvout" --runs 30
-    cp "$csvout" "$ROOT_DIR/global_benchmark_results/Lab2_benchmark_${name}_linux.csv"
+    cp "$csvout" "$ROOT_DIR/global_benchmark_results/Lab2_benchmark_${name}_linux.csv" 2>/dev/null || true
 done
 
 # ---------------------------------------------------------
