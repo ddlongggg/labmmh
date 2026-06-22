@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/Lab4_Task5_Benchmark.dir/Lab4_Task5_Benchmark.cpp.o -o Lab4_Task5_Benchmark  /usr/lib/x86_64-linux-gnu/libcrypto.so 

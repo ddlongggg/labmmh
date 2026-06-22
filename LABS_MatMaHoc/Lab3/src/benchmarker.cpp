@@ -9,6 +9,9 @@
 #include <cryptopp/gcm.h>
 #include <fstream>
 
+typedef CryptoPP::RSAES<CryptoPP::OAEP<CryptoPP::SHA256>>::Encryptor RSAES_OAEP_SHA256_Encryptor;
+typedef CryptoPP::RSAES<CryptoPP::OAEP<CryptoPP::SHA256>>::Decryptor RSAES_OAEP_SHA256_Decryptor;
+
 using namespace CryptoPP;
 using namespace std::chrono;
 

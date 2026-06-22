@@ -1,0 +1,6 @@
+/home/duclong2901/labmmh/labmmh/LABS_MatMaHoc/Lab4/build_linux/CMakeFiles/Lab4_Task1_HashSuite.dir
+/home/duclong2901/labmmh/labmmh/LABS_MatMaHoc/Lab4/build_linux/CMakeFiles/Lab4_Task2_X509.dir
+/home/duclong2901/labmmh/labmmh/LABS_MatMaHoc/Lab4/build_linux/CMakeFiles/Lab4_Task5_Benchmark.dir
+/home/duclong2901/labmmh/labmmh/LABS_MatMaHoc/Lab4/build_linux/CMakeFiles/Lab4_Task6A_LenExt.dir
+/home/duclong2901/labmmh/labmmh/LABS_MatMaHoc/Lab4/build_linux/CMakeFiles/edit_cache.dir
+/home/duclong2901/labmmh/labmmh/LABS_MatMaHoc/Lab4/build_linux/CMakeFiles/rebuild_cache.dir

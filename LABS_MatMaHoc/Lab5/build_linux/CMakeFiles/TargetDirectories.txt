@@ -1,0 +1,4 @@
+/home/duclong2901/labmmh/labmmh/LABS_MatMaHoc/Lab5/build_linux/CMakeFiles/sigtool.dir
+/home/duclong2901/labmmh/labmmh/LABS_MatMaHoc/Lab5/build_linux/CMakeFiles/benchmark.dir
+/home/duclong2901/labmmh/labmmh/LABS_MatMaHoc/Lab5/build_linux/CMakeFiles/edit_cache.dir
+/home/duclong2901/labmmh/labmmh/LABS_MatMaHoc/Lab5/build_linux/CMakeFiles/rebuild_cache.dir

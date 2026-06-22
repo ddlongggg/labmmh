@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/Lab4_Task6A_LenExt.dir/Lab4_Task6A_LenExt.cpp.o -o Lab4_Task6A_LenExt 

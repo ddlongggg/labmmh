@@ -12,35 +12,6 @@ echo "==========================================="
 
 
 # ---------------------------------------------------------
-# Lab 2
-# ---------------------------------------------------------
-echo "[+] Running Lab 2 Benchmarks..."
-cd "$ROOT_DIR/Lab2"
-mkdir -p build_linux && cd build_linux
-cmake .. -DCMAKE_BUILD_TYPE=Release
-make -j$(nproc)
-cd ..
-mkdir -p benchmarks
-
-declare -A sizes2=( ["1MiB"]=1048576 ["100MiB"]=104857600 )
-for name in "${!sizes2[@]}"; do
-    bytes=${sizes2[$name]}
-    payload="benchmarks/payload_${name}.bin"
-    csvout="benchmarks/benchmark_${name}_linux.csv"
-    if [ ! -f "$payload" ]; then
-        echo "    Generating $payload ($bytes bytes)..."
-        if [ $bytes -ge 1048576 ]; then
-            dd if=/dev/urandom of="$payload" bs=1M count=$((bytes/1048576)) status=none
-        else
-            dd if=/dev/urandom of="$payload" bs=1 count="$bytes" status=none
-        fi
-    fi
-    echo "    Benchmarking $name..."
-    ./build_linux/aestool2 bench --in "$payload" --out "$csvout" --runs 30
-    cp "$csvout" "$ROOT_DIR/global_benchmark_results/Lab2_benchmark_${name}_linux.csv" 2>/dev/null || true
-done
-
-# ---------------------------------------------------------
 # Lab 3
 # ---------------------------------------------------------
 echo "[+] Running Lab 3 Benchmarks..."

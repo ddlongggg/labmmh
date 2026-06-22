@@ -1,0 +1,11 @@
+nohup: ignoring input
+===========================================
+   STARTING ALL LAB BENCHMARKS (LINUX)
+===========================================
+[+] Running Lab 1 Benchmarks...
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/duclong2901/labmmh/labmmh/LABS_MatMaHoc/Lab1/build_linux
+Consolidate compiler generated dependencies of target aestool
+[100%] Built target aestool
+    Benchmarking 1MiB...

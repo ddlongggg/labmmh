@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/Lab4_Task1_HashSuite.dir/Lab4_Task1_HashSuite.cpp.o -o Lab4_Task1_HashSuite  /usr/lib/x86_64-linux-gnu/libcrypto.so 

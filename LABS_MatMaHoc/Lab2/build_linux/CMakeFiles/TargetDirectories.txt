@@ -1,0 +1,3 @@
+/home/duclong2901/labmmh/labmmh/LABS_MatMaHoc/Lab2/build_linux/CMakeFiles/aestool2.dir
+/home/duclong2901/labmmh/labmmh/LABS_MatMaHoc/Lab2/build_linux/CMakeFiles/edit_cache.dir
+/home/duclong2901/labmmh/labmmh/LABS_MatMaHoc/Lab2/build_linux/CMakeFiles/rebuild_cache.dir

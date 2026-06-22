@@ -9,6 +9,9 @@
 #include <cryptopp/filters.h>
 #include <iostream>
 
+typedef CryptoPP::RSAES<CryptoPP::OAEP<CryptoPP::SHA256>>::Encryptor RSAES_OAEP_SHA256_Encryptor;
+typedef CryptoPP::RSAES<CryptoPP::OAEP<CryptoPP::SHA256>>::Decryptor RSAES_OAEP_SHA256_Decryptor;
+
 using json = nlohmann::json;
 using namespace CryptoPP;
 

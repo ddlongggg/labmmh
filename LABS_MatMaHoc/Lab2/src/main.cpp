@@ -9,6 +9,7 @@
 #include "AES_CTR.h"
 #include "AES_XTS.h"
 #include "Benchmarker.h"
+#include <algorithm>
 
 namespace KATRunner {
     void RunKAT(const std::string& katFile);

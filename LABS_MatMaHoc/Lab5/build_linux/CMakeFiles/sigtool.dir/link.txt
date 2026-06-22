@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/sigtool.dir/Lab5_SigTool.cpp.o -o sigtool  -lcryptopp /usr/lib/x86_64-linux-gnu/libcrypto.so 
