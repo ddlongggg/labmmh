@@ -1,5 +1,5 @@
 CMakeFiles/Lab4_Task5_Benchmark.dir/Lab4_Task5_Benchmark.cpp.obj: \
- D:\LABS_MatMaHoc\Lab4\Lab4_Task5_Benchmark.cpp \
+ D:\lab_mmh\labmmh\LABS_MatMaHoc\Lab4\Lab4_Task5_Benchmark.cpp \
  C:/msys64/mingw64/include/c++/15.2.0/iostream \
  C:/msys64/mingw64/include/c++/15.2.0/bits/requires_hosted.h \
  C:/msys64/mingw64/include/c++/15.2.0/x86_64-w64-mingw32/bits/c++config.h \
@@ -171,29 +171,36 @@ CMakeFiles/Lab4_Task5_Benchmark.dir/Lab4_Task5_Benchmark.cpp.obj: \
  C:/msys64/mingw64/include/c++/15.2.0/bits/quoted_string.h \
  C:/msys64/mingw64/include/c++/15.2.0/sstream \
  C:/msys64/mingw64/include/c++/15.2.0/bits/sstream.tcc \
- C:/Strawberry/c/include/openssl/evp.h \
- C:/Strawberry/c/include/openssl/opensslconf.h \
- C:/Strawberry/c/include/openssl/opensslv.h \
- C:/Strawberry/c/include/openssl/ossl_typ.h \
- C:/Strawberry/c/include/openssl/e_os2.h \
- C:/Strawberry/c/include/openssl/symhacks.h \
- C:/Strawberry/c/include/openssl/bio.h \
+ D:/Labs_Crypto/openssl362/include/openssl/evp.h \
+ D:/Labs_Crypto/openssl362/include/openssl/macros.h \
+ D:/Labs_Crypto/openssl362/include/openssl/opensslconf.h \
+ D:/Labs_Crypto/openssl362/include/openssl/configuration.h \
+ D:/Labs_Crypto/openssl362/include/openssl/opensslv.h \
  C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/15.2.0/include/stdarg.h \
  C:/msys64/mingw64/include/stdarg.h \
  C:/msys64/mingw64/include/_mingw_stdarg.h \
- C:/Strawberry/c/include/openssl/crypto.h \
- C:/Strawberry/c/include/openssl/safestack.h \
- C:/Strawberry/c/include/openssl/stack.h \
- C:/Strawberry/c/include/openssl/cryptoerr.h \
- C:/Strawberry/c/include/openssl/bioerr.h \
- C:/Strawberry/c/include/openssl/evperr.h \
- C:/Strawberry/c/include/openssl/objects.h \
- C:/Strawberry/c/include/openssl/obj_mac.h \
- C:/Strawberry/c/include/openssl/asn1.h \
- C:/Strawberry/c/include/openssl/asn1err.h \
- C:/Strawberry/c/include/openssl/bn.h \
- C:/Strawberry/c/include/openssl/bnerr.h \
- C:/Strawberry/c/include/openssl/objectserr.h \
+ D:/Labs_Crypto/openssl362/include/openssl/types.h \
+ D:/Labs_Crypto/openssl362/include/openssl/e_os2.h \
+ D:/Labs_Crypto/openssl362/include/openssl/safestack.h \
+ D:/Labs_Crypto/openssl362/include/openssl/stack.h \
+ D:/Labs_Crypto/openssl362/include/openssl/core.h \
+ D:/Labs_Crypto/openssl362/include/openssl/core_dispatch.h \
+ D:/Labs_Crypto/openssl362/include/openssl/indicator.h \
+ D:/Labs_Crypto/openssl362/include/openssl/params.h \
+ D:/Labs_Crypto/openssl362/include/openssl/bn.h \
+ D:/Labs_Crypto/openssl362/include/openssl/crypto.h \
+ D:/Labs_Crypto/openssl362/include/openssl/cryptoerr.h \
+ D:/Labs_Crypto/openssl362/include/openssl/symhacks.h \
+ D:/Labs_Crypto/openssl362/include/openssl/cryptoerr_legacy.h \
+ D:/Labs_Crypto/openssl362/include/openssl/bnerr.h \
+ D:/Labs_Crypto/openssl362/include/openssl/bio.h \
+ D:/Labs_Crypto/openssl362/include/openssl/bioerr.h \
+ D:/Labs_Crypto/openssl362/include/openssl/evperr.h \
+ D:/Labs_Crypto/openssl362/include/openssl/objects.h \
+ D:/Labs_Crypto/openssl362/include/openssl/obj_mac.h \
+ D:/Labs_Crypto/openssl362/include/openssl/asn1.h \
+ D:/Labs_Crypto/openssl362/include/openssl/asn1err.h \
+ D:/Labs_Crypto/openssl362/include/openssl/objectserr.h \
  C:/msys64/mingw64/include/windows.h \
  C:/msys64/mingw64/include/sdkddkver.h C:/msys64/mingw64/include/excpt.h \
  C:/msys64/mingw64/include/windef.h \

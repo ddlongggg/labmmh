@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.10)
+project(Dummy)
+find_package(OpenSSL REQUIRED)
+message(STATUS "OpenSSL Version: ${OPENSSL_VERSION}")
+message(STATUS "OpenSSL Include Dir: ${OPENSSL_INCLUDE_DIR}")

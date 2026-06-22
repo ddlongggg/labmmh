@@ -33,6 +33,43 @@ void RecordResult(const std::string& algo, const std::string& op, size_t size, d
 }
 
 // -------------------------------------------------------------------------
+// Key Generation Benchmark
+// -------------------------------------------------------------------------
+void BenchmarkKeyGen() {
+    AutoSeededRandomPool prng;
+    const int RUNS = 5;
+    
+    // ECDSA-P256
+    const int ECDSA_OPS = 100;
+    for (int r = 0; r < RUNS; ++r) {
+        auto start = std::chrono::high_resolution_clock::now();
+        for (int i = 0; i < ECDSA_OPS; ++i) {
+            ECDSA<ECP, SHA256>::PrivateKey privKey;
+            privKey.Initialize(prng, ASN1::secp256r1());
+            ECDSA<ECP, SHA256>::PublicKey pubKey;
+            privKey.MakePublicKey(pubKey);
+        }
+        auto end = std::chrono::high_resolution_clock::now();
+        double ms = std::chrono::duration<double, std::milli>(end - start).count();
+        RecordResult("ECDSA-P256", "KeyGen", 0, ms, ECDSA_OPS);
+    }
+
+    // RSA-PSS-3072 (Slow, so fewer ops)
+    const int RSA_OPS = 2;
+    for (int r = 0; r < RUNS; ++r) {
+        auto start = std::chrono::high_resolution_clock::now();
+        for (int i = 0; i < RSA_OPS; ++i) {
+            RSA::PrivateKey privKey;
+            privKey.GenerateRandomWithKeySize(prng, 3072);
+            RSA::PublicKey pubKey(privKey);
+        }
+        auto end = std::chrono::high_resolution_clock::now();
+        double ms = std::chrono::duration<double, std::milli>(end - start).count();
+        RecordResult("RSA-PSS-3072", "KeyGen", 0, ms, RSA_OPS);
+    }
+}
+
+// -------------------------------------------------------------------------
 // ECDSA Benchmark
 // -------------------------------------------------------------------------
 void BenchmarkECDSA(size_t msgSize) {
@@ -50,7 +87,7 @@ void BenchmarkECDSA(size_t msgSize) {
     std::string signature;
 
     const int RUNS = 30;
-    const int OPS = 500;
+    const int OPS = 100;
     
     // Benchmark Sign
     for (int r = 0; r < RUNS; ++r) {
@@ -101,7 +138,7 @@ void BenchmarkRSAPSS(size_t msgSize) {
     std::string signature;
 
     const int RUNS = 30;
-    const int OPS = 500;
+    const int OPS = 100;
     
     // Benchmark Sign
     for (int r = 0; r < RUNS; ++r) {
@@ -145,6 +182,9 @@ int main() {
         };
 
         std::cout << "Starting Benchmarks...\n";
+        
+        std::cout << "Benchmarking Key Generation...\n";
+        BenchmarkKeyGen();
 
         for (size_t size : sizes) {
             std::cout << "Benchmarking size: " << size << " bytes\n";

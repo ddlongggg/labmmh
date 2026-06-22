@@ -4,7 +4,7 @@
 #include <string>
 
 namespace RSA_Decrypt {
-    void DecryptFile(const std::string& inFile, const std::string& privFile, const std::string& outFile, const std::string& label = "");
+    void DecryptFile(const std::string& inFile, const std::string& privFile, const std::string& outFile, const std::string& label = "", const std::string& format = "raw");
 }
 
 #endif // RSA_DECRYPT_H

@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "D:/LABS_MatMaHoc/Lab4/Lab4_Task6A_LenExt.cpp" "CMakeFiles/Lab4_Task6A_LenExt.dir/Lab4_Task6A_LenExt.cpp.obj" "gcc" "CMakeFiles/Lab4_Task6A_LenExt.dir/Lab4_Task6A_LenExt.cpp.obj.d"
+  "D:/lab_mmh/labmmh/LABS_MatMaHoc/Lab4/Lab4_Task6A_LenExt.cpp" "CMakeFiles/Lab4_Task6A_LenExt.dir/Lab4_Task6A_LenExt.cpp.obj" "gcc" "CMakeFiles/Lab4_Task6A_LenExt.dir/Lab4_Task6A_LenExt.cpp.obj.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

@@ -5,7 +5,6 @@
 #include <cstdint>
 #include <sstream>
 
-// --- SHA-256 Core Implementation for Length Extension ---
 
 #define ROTR(x, n) (((x) >> (n)) | ((x) << (32 - (n))))
 #define CH(x, y, z) (((x) & (y)) ^ (~(x) & (z)))
@@ -29,7 +28,7 @@ const uint32_t K[64] = {
 class CustomSHA256 {
 public:
     uint32_t state[8];
-    uint64_t total_len; // Length in bytes
+    uint64_t total_len; 
     std::vector<uint8_t> buffer;
 
     CustomSHA256() {
@@ -101,7 +100,6 @@ public:
     }
 };
 
-// Generate standard SHA-256 padding for a given length
 std::vector<uint8_t> generate_padding(uint64_t msg_len_bytes) {
     std::vector<uint8_t> pad;
     uint64_t bit_len = msg_len_bytes * 8;
@@ -136,14 +134,9 @@ void print_hex(const std::vector<uint8_t>& data) {
 int main(int argc, char* argv[]) {
     std::cout << "--- SHA-256 Length Extension Demo ---\n";
 
-    // Scenario: We know MAC = H(secret || msg)
-    // We know secret length, and msg. We want to forge MAC for secret || msg || padding || new_msg
-
-    // Simulated target
-    std::string secret = "SuperSecretKey!"; // 15 bytes
+    std::string secret = "SuperSecretKey!"; 
     std::string msg = "transfer 100$ to Bob";
     
-    // Original MAC computation
     CustomSHA256 original_hasher;
     std::vector<uint8_t> orig_data(secret.begin(), secret.end());
     orig_data.insert(orig_data.end(), msg.begin(), msg.end());
@@ -154,41 +147,32 @@ int main(int argc, char* argv[]) {
     std::cout << "Original Msg  : " << msg << "\n";
     std::cout << "Original MAC  : "; print_hex(orig_mac); std::cout << "\n\n";
 
-    // --- The Attack ---
     std::string append_msg = "; transfer 1000000$ to Eve";
     std::cout << "Target: Append -> " << append_msg << "\n";
 
-    // 1. Calculate padding that was originally appended to (secret || msg)
     uint64_t known_total_orig_len = secret.length() + msg.length();
     std::vector<uint8_t> padding = generate_padding(known_total_orig_len);
 
-    // 2. Setup malicious hasher starting from the original MAC state
     CustomSHA256 malicious_hasher;
     
-    // Convert orig_mac bytes to 32-bit state words
     std::vector<uint32_t> malicious_state(8);
     for (int i = 0; i < 8; ++i) {
         malicious_state[i] = (orig_mac[i*4] << 24) | (orig_mac[i*4+1] << 16) | (orig_mac[i*4+2] << 8) | orig_mac[i*4+3];
     }
 
-    // The length of the forged message before appending is: orig_len + padding_len
     uint64_t forged_len_before_append = known_total_orig_len + padding.size();
     
     malicious_hasher.set_state(malicious_state, forged_len_before_append);
 
-    // 3. Update with the malicious appended message
     std::vector<uint8_t> append_data(append_msg.begin(), append_msg.end());
     malicious_hasher.update(append_data);
     
-    // 4. Finalize to get the forged MAC
     std::vector<uint8_t> forged_mac = malicious_hasher.finalize();
 
     std::cout << "Forged MAC    : "; print_hex(forged_mac); std::cout << "\n\n";
 
-    // --- Verification (Did the attack work?) ---
     std::cout << "Verifying forgery...\n";
     
-    // A normal server would compute: H(secret || msg || padding || append_msg)
     std::vector<uint8_t> server_verification_data(secret.begin(), secret.end());
     server_verification_data.insert(server_verification_data.end(), msg.begin(), msg.end());
     server_verification_data.insert(server_verification_data.end(), padding.begin(), padding.end());

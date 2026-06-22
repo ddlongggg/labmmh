@@ -7,6 +7,7 @@
 #include <cryptopp/base64.h>
 #include <cryptopp/files.h>
 #include <cryptopp/queue.h>
+#include <cryptopp/hex.h>
 
 using namespace CryptoPP;
 
@@ -49,6 +50,18 @@ namespace Utils {
     std::string Base64Decode(const std::string& data) {
         std::string decoded;
         StringSource ss(data, true, new Base64Decoder(new StringSink(decoded)));
+        return decoded;
+    }
+
+    std::string HexEncode(const std::string& data) {
+        std::string encoded;
+        StringSource ss(data, true, new HexEncoder(new StringSink(encoded)));
+        return encoded;
+    }
+
+    std::string HexDecode(const std::string& data) {
+        std::string decoded;
+        StringSource ss(data, true, new HexDecoder(new StringSink(decoded)));
         return decoded;
     }
 
@@ -134,7 +147,6 @@ namespace Utils {
     RSA::PublicKey LoadPublicKey(const std::string& filename) {
         RSA::PublicKey key;
         try {
-            // Try loading as PEM first
             std::string content = LoadFile(filename);
             if (content.find("-----BEGIN") != std::string::npos) {
                 std::string base64Data;

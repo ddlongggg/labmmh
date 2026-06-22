@@ -1,5 +1,5 @@
 CMakeFiles/Lab4_Task6A_LenExt.dir/Lab4_Task6A_LenExt.cpp.obj: \
- D:\LABS_MatMaHoc\Lab4\Lab4_Task6A_LenExt.cpp \
+ D:\lab_mmh\labmmh\LABS_MatMaHoc\Lab4\Lab4_Task6A_LenExt.cpp \
  C:/msys64/mingw64/include/c++/15.2.0/iostream \
  C:/msys64/mingw64/include/c++/15.2.0/bits/requires_hosted.h \
  C:/msys64/mingw64/include/c++/15.2.0/x86_64-w64-mingw32/bits/c++config.h \

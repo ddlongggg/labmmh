@@ -4,7 +4,7 @@ import seaborn as sns
 
 # Read the benchmark data
 try:
-    df = pd.read_csv('benchmark_results.csv')
+    df = pd.read_csv('build/benchmark_results.csv')
 except FileNotFoundError:
     print("Error: benchmark_results.csv not found. Please run the benchmark program first.")
     exit(1)

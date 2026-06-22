@@ -69,28 +69,37 @@ void SaveKey(const std::string& filename, const Key& key, const std::string& hea
 // Load Key from PEM format
 template <class Key>
 void LoadKey(const std::string& filename, Key& key, const std::string& header) {
-    std::ifstream file(filename);
+    std::ifstream file(filename, std::ios::binary);
     if (!file) throw std::runtime_error("Cannot open key file");
     
-    std::string line, pem;
-    bool reading = false;
-    while (std::getline(file, line)) {
-        if (line.find("-----BEGIN " + header + "-----") != std::string::npos) {
-            reading = true;
-            continue;
+    std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    if (content.find("-----BEGIN") != std::string::npos) {
+        std::istringstream iss(content);
+        std::string line, pem;
+        bool reading = false;
+        while (std::getline(iss, line)) {
+            if (line.find("-----BEGIN " + header + "-----") != std::string::npos) {
+                reading = true;
+                continue;
+            }
+            if (line.find("-----END " + header + "-----") != std::string::npos) {
+                break;
+            }
+            if (reading) {
+                // remove carriage returns if any
+                line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
+                pem += line;
+            }
         }
-        if (line.find("-----END " + header + "-----") != std::string::npos) {
-            break;
-        }
-        if (reading) {
-            pem += line;
-        }
+        std::string der;
+        StringSource ss(pem, true, new Base64Decoder(new StringSink(der)));
+        StringSource ss2(der, true);
+        key.Load(ss2);
+    } else {
+        // Fallback to RAW DER
+        StringSource ss(content, true);
+        key.Load(ss);
     }
-
-    std::string der;
-    StringSource ss(pem, true, new Base64Decoder(new StringSink(der)));
-    StringSource ss2(der, true);
-    key.Load(ss2);
 }
 
 template <class Curve>
@@ -114,12 +123,11 @@ std::string SignECDSA_Deterministic(const std::string& privFile, const std::stri
     LoadKey(privFile, privKey, "EC PRIVATE KEY");
 
     // RFC6979 Deterministic Signature
-    typename ECDSA<ECP, Hash>::Signer signer(privKey);
+    typename ECDSA_RFC6979<ECP, Hash>::Signer signer(privKey);
     std::string signature;
 
-    AutoSeededRandomPool prng; 
     StringSource ss(message, true, 
-        new SignerFilter(prng, signer,
+        new SignerFilter(NullRNG(), signer,
             new StringSink(signature)
         )
     );
@@ -131,7 +139,7 @@ bool VerifyECDSA(const std::string& pubFile, const std::string& message, const s
     typename ECDSA<ECP, Hash>::PublicKey pubKey;
     LoadKey(pubFile, pubKey, "PUBLIC KEY");
 
-    typename ECDSA<ECP, Hash>::Verifier verifier(pubKey);
+    typename ECDSA_RFC6979<ECP, Hash>::Verifier verifier(pubKey);
     bool result = false;
     StringSource ss(message + signature, true,
         new SignatureVerificationFilter(verifier,
@@ -235,7 +243,7 @@ int main(int argc, char* argv[]) {
     }
 
     std::string command = argv[1];
-    std::string algo = "ecdsa-p256", pubFile = "", privFile = "", inFile = "", outFile = "", sigFile = "", hashAlgo = "sha256", encodeFormat = "raw";
+    std::string algo = "ecdsa-p256", pubFile = "", privFile = "", inFile = "", outFile = "", sigFile = "", hashAlgo = "sha256", encodeFormat = "raw", batchFile = "";
 
     for (int i = 2; i < argc; ++i) {
         std::string arg = argv[i];
@@ -247,6 +255,7 @@ int main(int argc, char* argv[]) {
         else if (arg == "--sig" && i + 1 < argc) sigFile = argv[++i];
         else if (arg == "--hash" && i + 1 < argc) hashAlgo = argv[++i];
         else if (arg == "--encode" && i + 1 < argc) encodeFormat = argv[++i];
+        else if (arg == "--batch" && i + 1 < argc) batchFile = argv[++i];
     }
 
     try {
@@ -279,30 +288,62 @@ int main(int argc, char* argv[]) {
             std::cout << "Signature successfully generated and written to " << outFile << "\n";
         }
         else if (command == "verify") {
-            std::string message = ReadFile(inFile);
-            std::string encodedSig = ReadFile(sigFile);
-            std::string rawSig = DecodeString(encodedSig, encodeFormat);
-            bool isValid = false;
+            auto verifySingle = [&](const std::string& msgPath, const std::string& sigPath) -> bool {
+                std::string message = ReadFile(msgPath);
+                std::string encodedSig = ReadFile(sigPath);
+                std::string rawSig = DecodeString(encodedSig, encodeFormat);
+                bool isValid = false;
 
-            if (algo == "ecdsa-p256") {
-                if (hashAlgo == "sha256") isValid = VerifyECDSA<SHA256>(pubFile, message, rawSig);
-                else if (hashAlgo == "sha384") isValid = VerifyECDSA<SHA384>(pubFile, message, rawSig);
-            } else if (algo == "ecdsa-p384") {
-                if (hashAlgo == "sha384") isValid = VerifyECDSA<SHA384>(pubFile, message, rawSig);
-                else if (hashAlgo == "sha256") isValid = VerifyECDSA<SHA256>(pubFile, message, rawSig);
-            } else if (algo == "rsa-pss-3072") {
-                if (hashAlgo == "sha256") isValid = VerifyRSAPSS<SHA256>(pubFile, message, rawSig);
-                else if (hashAlgo == "sha384") isValid = VerifyRSAPSS<SHA384>(pubFile, message, rawSig);
-            } else {
-                throw std::runtime_error("Unsupported algorithm: " + algo);
-            }
+                if (algo == "ecdsa-p256") {
+                    if (hashAlgo == "sha256") isValid = VerifyECDSA<SHA256>(pubFile, message, rawSig);
+                    else if (hashAlgo == "sha384") isValid = VerifyECDSA<SHA384>(pubFile, message, rawSig);
+                } else if (algo == "ecdsa-p384") {
+                    if (hashAlgo == "sha384") isValid = VerifyECDSA<SHA384>(pubFile, message, rawSig);
+                    else if (hashAlgo == "sha256") isValid = VerifyECDSA<SHA256>(pubFile, message, rawSig);
+                } else if (algo == "rsa-pss-3072") {
+                    if (hashAlgo == "sha256") isValid = VerifyRSAPSS<SHA256>(pubFile, message, rawSig);
+                    else if (hashAlgo == "sha384") isValid = VerifyRSAPSS<SHA384>(pubFile, message, rawSig);
+                } else {
+                    throw std::runtime_error("Unsupported algorithm: " + algo);
+                }
+                return isValid;
+            };
 
-            if (isValid) {
-                std::cout << "[PASS] Signature Verification Successful.\n";
-                return 0;
-            } else {
-                std::cerr << "[FAIL] Signature Verification Failed.\n";
+            if (!batchFile.empty()) {
+                std::ifstream bfile(batchFile);
+                if (!bfile) throw std::runtime_error("Cannot open batch file");
+                std::string line;
+                int count = 0, passed = 0;
+                while (std::getline(bfile, line)) {
+                    if (line.empty()) continue;
+                    std::istringstream iss(line);
+                    std::string mFile, sFile;
+                    if (iss >> mFile >> sFile) {
+                        count++;
+                        try {
+                            if (verifySingle(mFile, sFile)) {
+                                std::cout << "[PASS] " << mFile << " " << sFile << "\n";
+                                passed++;
+                            } else {
+                                std::cout << "[FAIL] " << mFile << " " << sFile << "\n";
+                            }
+                        } catch(const std::exception& e) {
+                            std::cout << "[ERROR] " << mFile << " " << sFile << " - " << e.what() << "\n";
+                        }
+                    }
+                }
+                std::cout << "Batch Verification: " << passed << "/" << count << " passed.\n";
+                if (passed == count && count > 0) return 0;
                 return 1;
+            } else {
+                bool isValid = verifySingle(inFile, sigFile);
+                if (isValid) {
+                    std::cout << "[PASS] Signature Verification Successful.\n";
+                    return 0;
+                } else {
+                    std::cerr << "[FAIL] Signature Verification Failed.\n";
+                    return 1;
+                }
             }
         }
         else {

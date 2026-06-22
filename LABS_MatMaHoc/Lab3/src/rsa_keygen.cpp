@@ -36,17 +36,14 @@ namespace RSA_KeyGen {
             throw std::runtime_error("Key validation failed");
         }
 
-        // Save PEM
         Utils::SavePublicKeyToPEM(publicKey, pubFile);
         Utils::SavePrivateKeyToPEM(privateKey, privFile);
 
-        // Save DER (by modifying extension if ends with .pem, else append .der)
         std::string pubDerFile = pubFile.substr(0, pubFile.find_last_of('.')) + ".der";
         std::string privDerFile = privFile.substr(0, privFile.find_last_of('.')) + ".der";
         Utils::SavePublicKeyToDER(publicKey, pubDerFile);
         Utils::SavePrivateKeyToDER(privateKey, privDerFile);
 
-        // Metadata JSON
         json metadata = {
             {"creation_time", GetCurrentTimeStr()},
             {"modulus_bits", bits},

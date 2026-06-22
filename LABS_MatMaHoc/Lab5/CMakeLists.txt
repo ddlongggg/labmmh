@@ -14,7 +14,6 @@ if(WIN32)
     include_directories(${CRYPTOPP_INCLUDE_DIR})
 endif()
 
-# 1. SigTool
 add_executable(sigtool Lab5_SigTool.cpp)
 if(WIN32)
     target_link_libraries(sigtool PRIVATE ${CRYPTOPP_LIBRARIES} ${OPENSSL_CRYPTO_LIBRARY})
@@ -23,7 +22,6 @@ else()
     target_link_libraries(sigtool PRIVATE cryptopp ${OPENSSL_CRYPTO_LIBRARY})
 endif()
 
-# 2. Benchmark
 add_executable(benchmark Lab5_Benchmark.cpp)
 if(WIN32)
     target_link_libraries(benchmark PRIVATE ${CRYPTOPP_LIBRARIES} ${OPENSSL_CRYPTO_LIBRARY})

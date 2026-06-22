@@ -17,7 +17,7 @@ using namespace CryptoPP;
 
 namespace RSA_Encrypt {
 
-    void EncryptFile(const std::string& inFile, const std::string& pubFile, const std::string& outFile, const std::string& label) {
+    void EncryptFile(const std::string& inFile, const std::string& pubFile, const std::string& outFile, const std::string& label, const std::string& format) {
         AutoSeededRandomPool rng;
         RSA::PublicKey publicKey = Utils::LoadPublicKey(pubFile);
 
@@ -42,14 +42,18 @@ namespace RSA_Encrypt {
                 encryptor.Encrypt(rng, reinterpret_cast<const byte*>(plaintext.data()), plaintext.size(), reinterpret_cast<byte*>(ciphertext.data()), params);
             }
             
-            Utils::WriteBinaryFile(outFile, ciphertext);
+            std::string outData = ciphertext;
+            if (format == "hex") outData = Utils::HexEncode(ciphertext);
+            else if (format == "base64") outData = Utils::Base64Encode(ciphertext);
+            else if (format != "raw") throw std::runtime_error("Unsupported format: " + format);
+            
+            Utils::WriteBinaryFile(outFile, outData);
             std::cout << "Saved RSA ciphertext to " << outFile << "\n";
         } else {
             std::cout << "Message size " << plaintext.length() << " bytes exceeds RSA limit (" << maxPlaintextLength << " bytes). Switching to Hybrid Envelope Encryption (AES-GCM + RSA).\n";
             
-            // AES-GCM variables
-            byte aesKey[32]; // 256-bit AES
-            byte iv[12];     // 96-bit IV
+            byte aesKey[32]; 
+            byte iv[12];     
             rng.GenerateBlock(aesKey, sizeof(aesKey));
             rng.GenerateBlock(iv, sizeof(iv));
 
@@ -71,7 +75,6 @@ namespace RSA_Encrypt {
             std::string encryptedAesKey;
             StringSource ss(aesKey, sizeof(aesKey), true, new PK_EncryptorFilter(rng, encryptor, new StringSink(encryptedAesKey)));
 
-            // Save JSON Envelope
             json envelope = {
                 {"mode", "RSA-OAEP-AES-GCM"},
                 {"rsa_modulus", publicKey.GetModulus().BitCount()},
@@ -81,12 +84,14 @@ namespace RSA_Encrypt {
                 {"tag", Utils::Base64Encode(mac)}
             };
             
-            // We write the JSON envelope to a metadata file, or maybe we prepend it to the ciphertext file?
-            // The requirement says "Output structured envelope ... Ciphertext: raw / hex / base64 ... Envelope header: JSON"
-            // Let's save the JSON envelope to outFile + ".json" and ciphertext to outFile
             std::string envelopeFile = outFile + ".json";
             Utils::SaveFile(envelopeFile, envelope.dump(4));
-            Utils::WriteBinaryFile(outFile, ciphertext);
+            std::string outData = ciphertext;
+            if (format == "hex") outData = Utils::HexEncode(ciphertext);
+            else if (format == "base64") outData = Utils::Base64Encode(ciphertext);
+            else if (format != "raw") throw std::runtime_error("Unsupported format: " + format);
+            
+            Utils::WriteBinaryFile(outFile, outData);
             
             std::cout << "Saved AES-GCM ciphertext to " << outFile << "\n";
             std::cout << "Saved JSON Envelope to " << envelopeFile << "\n";

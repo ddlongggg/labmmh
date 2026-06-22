@@ -1,5 +1,6 @@
 import os
 import subprocess
+import glob
 import pandas as pd
 # pyrefly: ignore [missing-import]
 import matplotlib.pyplot as plt
@@ -41,6 +42,11 @@ def run_benchmarks():
 def plot_benchmark(csv_file, name):
     df = pd.read_csv(csv_file)
     
+    # Kiểm tra xem có cột 'Run' không (chỉ vẽ cho AES Lab1)
+    if 'Run' not in df.columns:
+        print(f"Bỏ qua {csv_file} vì không đúng định dạng Lab1.")
+        return
+
     plt.figure(figsize=(10, 5))
     modes = [col for col in df.columns if col != 'Run']
     
@@ -56,9 +62,12 @@ def plot_benchmark(csv_file, name):
     }
     
     for mode in modes:
-        plt.plot(df['Run'], df[mode], label=mode.upper(), color=colors.get(mode, 'black'))
+        plt.plot(df['Run'], df[mode], label=mode.upper(), color=colors.get(mode.lower(), 'black'))
         
-    plt.title(f"Thời gian thực thi (Encrypt): benchmark_{name}.csv")
+    op_type = "Decrypt" if "dec" in name.lower() else "Encrypt"
+    basename = os.path.basename(csv_file)
+    
+    plt.title(f"Thời gian thực thi ({op_type}): {basename}")
     plt.xlabel("Số lần chạy (Run)")
     plt.ylabel("Thời gian (Giây)")
     plt.grid(True)
@@ -69,5 +78,22 @@ def plot_benchmark(csv_file, name):
     plt.close()
     print(f"Saved plot to {plot_out}")
 
+def plot_global_benchmarks():
+    os.makedirs("benchmarks", exist_ok=True)
+    global_dir = r"..\global_benchmark_results"
+    
+    csv_files = glob.glob(os.path.join(global_dir, "Lab1_benchmark_*.csv"))
+    
+    if not csv_files:
+        print(f"Không tìm thấy file CSV nào trong {global_dir}")
+        return
+        
+    for csv_file in csv_files:
+        basename = os.path.basename(csv_file)
+        name = basename.replace(".csv", "")
+        print(f"Plotting {basename}...")
+        plot_benchmark(csv_file, name)
+
 if __name__ == "__main__":
-    run_benchmarks()
+    # Đã chuyển sang vẽ từ thư mục global_benchmark_results
+    plot_global_benchmarks()

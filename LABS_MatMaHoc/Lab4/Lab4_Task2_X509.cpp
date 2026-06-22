@@ -13,7 +13,6 @@ void print_openssl_error() {
     std::cerr << "OpenSSL Error: " << err_buf << std::endl;
 }
 
-// Helper to print X509_NAME
 void print_name(const char* label, X509_NAME* name) {
     if (!name) return;
     char* str = X509_NAME_oneline(name, nullptr, 0);
@@ -31,7 +30,6 @@ int main(int argc, char* argv[]) {
 
     const char* cert_path = argv[1];
     
-    // 1. Load Certificate
     FILE* fp = fopen(cert_path, "r");
     if (!fp) {
         std::cerr << "Failed to open certificate file: " << cert_path << "\n";
@@ -49,22 +47,18 @@ int main(int argc, char* argv[]) {
 
     std::cout << "=== Certificate Information ===\n";
 
-    // 2. Extract Subject and Issuer
     print_name("Subject", X509_get_subject_name(cert));
     print_name("Issuer ", X509_get_issuer_name(cert));
 
-    // 3. Extract Validity Period
     std::cout << "Not Before: ";
     ASN1_TIME_print(BIO_new_fp(stdout, BIO_NOCLOSE), X509_get0_notBefore(cert));
     std::cout << "\nNot After : ";
     ASN1_TIME_print(BIO_new_fp(stdout, BIO_NOCLOSE), X509_get0_notAfter(cert));
     std::cout << "\n";
 
-    // 4. Extract Signature Algorithm
     int pkey_nid = X509_get_signature_nid(cert);
     std::cout << "Signature Algorithm: " << OBJ_nid2ln(pkey_nid) << "\n";
 
-    // 5. Subject Public Key Info
     EVP_PKEY* pkey = X509_get0_pubkey(cert);
     if (pkey) {
         int key_type = EVP_PKEY_base_id(pkey);
@@ -72,17 +66,14 @@ int main(int argc, char* argv[]) {
                   << EVP_PKEY_bits(pkey) << " bits)\n";
     }
 
-    // 6. Key Usage & SANs (Extensions)
     std::cout << "Extensions:\n";
     
-    // Key Usage
     ASN1_BIT_STRING* usage = (ASN1_BIT_STRING*)X509_get_ext_d2i(cert, NID_key_usage, nullptr, nullptr);
     if (usage) {
         std::cout << "  Key Usage: Present\n";
         ASN1_BIT_STRING_free(usage);
     }
 
-    // Subject Alternative Name
     STACK_OF(GENERAL_NAME)* sans = (STACK_OF(GENERAL_NAME)*)X509_get_ext_d2i(cert, NID_subject_alt_name, nullptr, nullptr);
     if (sans) {
         std::cout << "  Subject Alternative Names:\n";
@@ -99,7 +90,6 @@ int main(int argc, char* argv[]) {
         sk_GENERAL_NAME_pop_free(sans, GENERAL_NAME_free);
     }
 
-    // 7. Signature Verification
     std::cout << "\n=== Signature Verification ===\n";
     if (argc >= 3) {
         const char* issuer_path = argv[2];
@@ -127,8 +117,6 @@ int main(int argc, char* argv[]) {
         }
     } else {
         std::cout << "No issuer certificate provided. Checking TBS consistency internally.\n";
-        // Just verify if the cert can be loaded correctly and structures are sound.
-        // Fails closed if OpenSSL cannot parse it.
         std::cout << "Note: Cannot cryptographically verify without issuer public key.\n";
         std::cout << "[WARN] Verification bypassed - Structure appears valid.\n";
     }

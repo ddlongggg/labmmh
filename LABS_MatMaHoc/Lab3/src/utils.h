@@ -13,9 +13,11 @@ namespace Utils {
     std::string ReadBinaryFile(const std::string& filename);
     void WriteBinaryFile(const std::string& filename, const std::string& data);
 
-    // Base64
+    // Base64 & Hex
     std::string Base64Encode(const std::string& data);
     std::string Base64Decode(const std::string& data);
+    std::string HexEncode(const std::string& data);
+    std::string HexDecode(const std::string& data);
 
     // Key Conversions (DER <-> PEM)
     void SavePrivateKeyToPEM(const CryptoPP::RSA::PrivateKey& key, const std::string& filename);

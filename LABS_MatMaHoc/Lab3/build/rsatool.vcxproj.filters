@@ -1,31 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="D:\LABS_MatMaHoc\Lab3\src\utils.cpp">
+    <ClCompile Include="D:\lab_mmh\labmmh\LABS_MatMaHoc\Lab3\src\utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D:\LABS_MatMaHoc\Lab3\src\rsa_keygen.cpp">
+    <ClCompile Include="D:\lab_mmh\labmmh\LABS_MatMaHoc\Lab3\src\rsa_keygen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D:\LABS_MatMaHoc\Lab3\src\rsa_encrypt.cpp">
+    <ClCompile Include="D:\lab_mmh\labmmh\LABS_MatMaHoc\Lab3\src\rsa_encrypt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D:\LABS_MatMaHoc\Lab3\src\rsa_decrypt.cpp">
+    <ClCompile Include="D:\lab_mmh\labmmh\LABS_MatMaHoc\Lab3\src\rsa_decrypt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D:\LABS_MatMaHoc\Lab3\src\benchmarker.cpp">
+    <ClCompile Include="D:\lab_mmh\labmmh\LABS_MatMaHoc\Lab3\src\benchmarker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="D:\LABS_MatMaHoc\Lab3\src\rsatool.cpp">
+    <ClCompile Include="D:\lab_mmh\labmmh\LABS_MatMaHoc\Lab3\src\rsatool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="D:\LABS_MatMaHoc\Lab3\CMakeLists.txt" />
+    <CustomBuild Include="D:\lab_mmh\labmmh\LABS_MatMaHoc\Lab3\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{76A61BF3-31B5-327C-B61B-FEE589AA7CDD}</UniqueIdentifier>
+      <UniqueIdentifier>{CF8C5C6A-C450-384D-A878-BEEA1F84850A}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

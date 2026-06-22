@@ -1,6 +1,6 @@
-^D:\LABS_MATMAHOC\LAB3\CMAKELISTS.TXT
+^D:\LAB_MMH\LABMMH\LABS_MATMAHOC\LAB3\CMAKELISTS.TXT
 setlocal
-C:\Strawberry\c\bin\cmake.exe -SD:/LABS_MatMaHoc/Lab3 -BD:/LABS_MatMaHoc/Lab3/build --check-stamp-file D:/LABS_MatMaHoc/Lab3/build/CMakeFiles/generate.stamp
+C:\Strawberry\c\bin\cmake.exe -SD:/lab_mmh/labmmh/LABS_MatMaHoc/Lab3 -BD:/lab_mmh/labmmh/LABS_MatMaHoc/Lab3/build --check-stamp-file D:/lab_mmh/labmmh/LABS_MatMaHoc/Lab3/build/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone

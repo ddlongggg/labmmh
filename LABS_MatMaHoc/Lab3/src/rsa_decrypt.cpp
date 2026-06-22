@@ -18,7 +18,7 @@ using namespace CryptoPP;
 
 namespace RSA_Decrypt {
 
-    void DecryptFile(const std::string& inFile, const std::string& privFile, const std::string& outFile, const std::string& label) {
+    void DecryptFile(const std::string& inFile, const std::string& privFile, const std::string& outFile, const std::string& label, const std::string& format) {
         AutoSeededRandomPool rng;
         RSA::PrivateKey privateKey = Utils::LoadPrivateKey(privFile);
 
@@ -28,7 +28,6 @@ namespace RSA_Decrypt {
 
         RSAES_OAEP_SHA256_Decryptor decryptor(privateKey);
 
-        // Check if there is an envelope file
         std::string envelopeFile = inFile + ".json";
         std::ifstream envStream(envelopeFile);
         
@@ -60,7 +59,12 @@ namespace RSA_Decrypt {
                 throw std::runtime_error("Recovered AES key has invalid size");
             }
 
-            std::string ciphertext = Utils::ReadBinaryFile(inFile);
+            std::string rawData = Utils::ReadBinaryFile(inFile);
+            std::string ciphertext = rawData;
+            if (format == "hex") ciphertext = Utils::HexDecode(rawData);
+            else if (format == "base64") ciphertext = Utils::Base64Decode(rawData);
+            else if (format != "raw") throw std::runtime_error("Unsupported format: " + format);
+            
             std::string plaintext;
 
             try {
@@ -72,7 +76,6 @@ namespace RSA_Decrypt {
                                                  AuthenticatedDecryptionFilter::MAC_AT_BEGIN | AuthenticatedDecryptionFilter::THROW_EXCEPTION, 
                                                  tag.size());
 
-                // For CryptoPP MAC_AT_BEGIN, we put the MAC first, then the ciphertext
                 df.ChannelPut(DEFAULT_CHANNEL, reinterpret_cast<const byte*>(tag.data()), tag.size());
                 df.ChannelPut(DEFAULT_CHANNEL, reinterpret_cast<const byte*>(ciphertext.data()), ciphertext.size());
                 df.ChannelMessageEnd(DEFAULT_CHANNEL);
@@ -88,7 +91,12 @@ namespace RSA_Decrypt {
 
         } else {
             std::cout << "No envelope found. Attempting Direct RSA-OAEP Decryption...\n";
-            std::string ciphertext = Utils::ReadBinaryFile(inFile);
+            std::string rawData = Utils::ReadBinaryFile(inFile);
+            std::string ciphertext = rawData;
+            if (format == "hex") ciphertext = Utils::HexDecode(rawData);
+            else if (format == "base64") ciphertext = Utils::Base64Decode(rawData);
+            else if (format != "raw") throw std::runtime_error("Unsupported format: " + format);
+            
             std::string plaintext;
             
             try {

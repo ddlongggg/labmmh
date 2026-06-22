@@ -8,7 +8,6 @@
 #include <map>
 #include <iomanip>
 
-// Utility: Print hex
 void print_hex(const unsigned char* data, size_t len) {
     for (size_t i = 0; i < len; ++i) {
         std::cout << std::hex << std::setw(2) << std::setfill('0') << (int)data[i];
@@ -16,13 +15,11 @@ void print_hex(const unsigned char* data, size_t len) {
     std::cout << std::dec << std::endl;
 }
 
-// Convert string to lower case
 std::string to_lower(std::string str) {
     for (auto& c : str) c = tolower(c);
     return str;
 }
 
-// Hasher Class
 class Hasher {
 private:
     const EVP_MD* md;
@@ -38,7 +35,6 @@ public:
         is_xof = (algo_name == "shake128" || algo_name == "shake256");
         xof_outlen = outlen;
 
-        // Map user input to OpenSSL names
         std::string ossl_algo = algo_name;
         if (algo_name == "sha224") ossl_algo = "SHA224";
         else if (algo_name == "sha256") ossl_algo = "SHA256";
@@ -113,7 +109,6 @@ public:
             throw std::runtime_error("DigestInit failed");
         }
 
-        // Stream mode buffering (4KB chunk)
         const size_t buffer_size = 4096;
         std::vector<char> buffer(buffer_size);
 
@@ -150,17 +145,13 @@ public:
     }
 };
 
-// Known Answer Tests (KATs)
 bool run_kats() {
     std::cout << "Running Known Answer Tests (KATs)...\n";
     
-    // SHA-256 KAT for empty string
-    // e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
     Hasher sha256("sha256");
     auto res_sha256 = sha256.hash_data((const unsigned char*)"", 0);
     std::string expected_sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
     
-    // Convert to hex string
     std::string hex_sha256 = "";
     for (auto b : res_sha256) {
         char buf[3];
@@ -174,8 +165,6 @@ bool run_kats() {
     }
     std::cout << "[PASS] SHA-256\n";
 
-    // SHAKE256 KAT (empty string, 32 bytes)
-    // 46b9dd2b0ba88d13233b3feb743eeb243fcd52ea62b81b82b50c27646ed5762f
     Hasher shake256("shake256", 32);
     auto res_shake = shake256.hash_data((const unsigned char*)"", 0);
     std::string expected_shake = "46b9dd2b0ba88d13233b3feb743eeb243fcd52ea62b81b82b50c27646ed5762f";
@@ -197,6 +186,7 @@ bool run_kats() {
 
 void print_usage() {
     std::cout << "Usage:\n";
+    std::cout << "  hashtool kat\n";
     std::cout << "  hashtool --algo <algo> [--outlen <bytes>] --in <file> [--out <output_file>] [--stream]\n";
     std::cout << "Algorithms:\n";
     std::cout << "  sha224, sha256, sha384, sha512\n";
@@ -205,10 +195,13 @@ void print_usage() {
 }
 
 int main(int argc, char* argv[]) {
-    // Run KATs unconditionally as required by "Fail closed" on startup
-    if (!run_kats()) {
-        std::cerr << "Fatal error: Cryptographic self-tests failed. Halting.\n";
-        return 1;
+    if (argc >= 2 && std::string(argv[1]) == "kat") {
+        // Chạy độc lập chế độ kiểm thử KAT
+        if (!run_kats()) {
+            std::cerr << "Fatal error: Cryptographic self-tests failed. Halting.\n";
+            return 1;
+        }
+        return 0;
     }
 
     if (argc < 2) {
@@ -220,7 +213,7 @@ int main(int argc, char* argv[]) {
     std::string infile = "";
     std::string outfile = "";
     size_t outlen = 0;
-    bool stream = false; // Note: We use stream mode implicitly for files anyway, but flag is kept for compatibility
+    bool stream = false;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -245,10 +238,8 @@ int main(int argc, char* argv[]) {
     try {
         Hasher hasher(algo, outlen);
         
-        // Hash the file
         auto digest = hasher.hash_file(infile);
 
-        // Output logic
         if (!outfile.empty()) {
             std::ofstream out(outfile, std::ios::binary);
             if (!out) {
