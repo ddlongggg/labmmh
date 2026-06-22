@@ -12,20 +12,27 @@ if(WIN32)
     set(CRYPTOPP_INCLUDE_DIR "C:/msys64/home/LONG/cryptopp")
     set(CRYPTOPP_LIBRARIES "C:/msys64/home/LONG/cryptopp/libcryptopp.a")
     include_directories(${CRYPTOPP_INCLUDE_DIR})
+else()
+    # Cấu hình thêm đường dẫn include cho Linux ở đây để sửa lỗi fatal error: cryptlib.h
+    include_directories(/usr/include/crypto++)
 endif()
 
+# Thực thi sigtool
 add_executable(sigtool Lab5_SigTool.cpp)
 if(WIN32)
     target_link_libraries(sigtool PRIVATE ${CRYPTOPP_LIBRARIES} ${OPENSSL_CRYPTO_LIBRARY})
     target_link_options(sigtool PRIVATE "-Wl,--allow-multiple-definition")
 else()
-    target_link_libraries(sigtool PRIVATE cryptopp ${OPENSSL_CRYPTO_LIBRARY})
+    # Thêm định danh thư viện chuẩn trên Linux
+    target_link_libraries(sigtool PRIVATE crypto++ ${OPENSSL_CRYPTO_LIBRARY})
 endif()
 
+# Thực thi benchmark
 add_executable(benchmark Lab5_Benchmark.cpp)
 if(WIN32)
     target_link_libraries(benchmark PRIVATE ${CRYPTOPP_LIBRARIES} ${OPENSSL_CRYPTO_LIBRARY})
     target_link_options(benchmark PRIVATE "-Wl,--allow-multiple-definition")
 else()
-    target_link_libraries(benchmark PRIVATE cryptopp ${OPENSSL_CRYPTO_LIBRARY})
+    # Thêm định danh thư viện chuẩn trên Linux
+    target_link_libraries(benchmark PRIVATE crypto++ ${OPENSSL_CRYPTO_LIBRARY})
 endif()

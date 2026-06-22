@@ -1,9 +1,7 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/sigtool.dir/Lab5_SigTool.cpp.obj"
-  "CMakeFiles/sigtool.dir/Lab5_SigTool.cpp.obj.d"
-  "libsigtool.dll.a"
-  "sigtool.exe"
-  "sigtool.exe.manifest"
+  "CMakeFiles/sigtool.dir/Lab5_SigTool.cpp.o"
+  "CMakeFiles/sigtool.dir/Lab5_SigTool.cpp.o.d"
+  "sigtool"
   "sigtool.pdb"
 )
 

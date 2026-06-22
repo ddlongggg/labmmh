@@ -1,10 +1,8 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/cert_demo.dir/cert_demo.cpp.obj"
-  "CMakeFiles/cert_demo.dir/cert_demo.cpp.obj.d"
-  "cert_demo.exe"
-  "cert_demo.exe.manifest"
+  "CMakeFiles/cert_demo.dir/cert_demo.cpp.o"
+  "CMakeFiles/cert_demo.dir/cert_demo.cpp.o.d"
+  "cert_demo"
   "cert_demo.pdb"
-  "libcert_demo.dll.a"
 )
 
 # Per-language clean rules from dependency scanning.

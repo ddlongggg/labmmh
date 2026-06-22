@@ -8,11 +8,11 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "D:/LABS_MatMaHoc/Lab5/Lab5_SigTool.cpp" "CMakeFiles/sigtool.dir/Lab5_SigTool.cpp.obj" "gcc" "CMakeFiles/sigtool.dir/Lab5_SigTool.cpp.obj.d"
+  "/home/duclong2901/labmmh/labmmh/LABS_MatMaHoc/Lab5/Lab5_SigTool.cpp" "CMakeFiles/sigtool.dir/Lab5_SigTool.cpp.o" "gcc" "CMakeFiles/sigtool.dir/Lab5_SigTool.cpp.o.d"
   )
 
-# Targets to which this target links which contain Fortran sources.
-set(CMAKE_Fortran_TARGET_LINKED_INFO_FILES
+# Targets to which this target links.
+set(CMAKE_TARGET_LINKED_INFO_FILES
   )
 
 # Fortran module output directory.

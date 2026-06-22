@@ -1,9 +1,7 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/pqtool.dir/pqtool.cpp.obj"
-  "CMakeFiles/pqtool.dir/pqtool.cpp.obj.d"
-  "libpqtool.dll.a"
-  "pqtool.exe"
-  "pqtool.exe.manifest"
+  "CMakeFiles/pqtool.dir/pqtool.cpp.o"
+  "CMakeFiles/pqtool.dir/pqtool.cpp.o.d"
+  "pqtool"
   "pqtool.pdb"
 )
 
